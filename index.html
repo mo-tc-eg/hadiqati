@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#10251B" />
+<title>حديقتي — إدارة سقاية الشجر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --dark-green: #10251B;
+    --primary-green: #17613C;
+    --secondary-green: #2C9B63;
+    --bg: #F4F6F1;
+    --white: #FFFFFF;
+    --text: #14251D;
+    --text-secondary: #77817B;
+    --line: rgba(16, 37, 27, 0.08);
+    --yellow: #E8A93B;
+    --red: #D9534F;
+    --black: #2A2A2A;
+    --amber: #C98A2B;
+    --radius-lg: 28px;
+    --radius-md: 22px;
+    --radius-sm: 18px;
+    --shadow-sm: 0 2px 10px rgba(16, 37, 27, 0.05);
+    --shadow-md: 0 8px 24px rgba(16, 37, 27, 0.07);
+    --app-max: 480px;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg); color: var(--text); direction: rtl;
+    -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
+  }
+  body { min-height: 100vh; min-height: 100dvh; }
+  button { font-family: inherit; border: none; background: none; cursor: pointer; color: inherit; font-size: inherit; }
+  img { display: block; max-width: 100%; }
+  .app {
+    max-width: var(--app-max); margin: 0 auto; min-height: 100vh; min-height: 100dvh;
+    background: var(--bg); padding-bottom: calc(96px + env(safe-area-inset-bottom));
+    position: relative; overflow-x: hidden;
+  }
+  @media (min-width: 640px) { :root { --app-max: 620px; } }
+  @media (min-width: 1000px) { :root { --app-max: 820px; } }
+
+  /* HERO */
+  .hero {
+    position: relative; background: linear-gradient(155deg, #10251B 0%, #17613C 90%);
+    color: #fff; padding: 22px 22px 34px; border-radius: 0 0 32px 32px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(16, 37, 27, 0.18);
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: -40% -40% auto auto; width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(44, 155, 99, 0.55), transparent 68%);
+    filter: blur(10px); pointer-events: none;
+  }
+  .hero-top { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 34px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-icon {
+    width: 42px; height: 42px; border-radius: 14px; background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.14); display: grid; place-items: center;
+    color: #fff; backdrop-filter: blur(6px);
+  }
+  .brand-icon svg { width: 22px; height: 22px; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-name { font-weight: 800; font-size: 18px; letter-spacing: -0.2px; }
+  .brand-tag { font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 500; margin-top: 2px; }
+  .day-chip {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 9px 14px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 16px; backdrop-filter: blur(8px);
+  }
+  .day-chip-label { font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.6); letter-spacing: 0.5px; }
+  .day-chip-value { font-size: 12.5px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; }
+  .day-chip-value::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #66E0A3;
+    box-shadow: 0 0 0 3px rgba(102, 224, 163, 0.25);
+  }
+  .hero-content { position: relative; }
+  .greeting { font-size: 14px; color: rgba(255,255,255,0.72); font-weight: 500; margin-bottom: 8px; }
+  .hero-title { font-size: 30px; font-weight: 800; line-height: 1.25; letter-spacing: -0.6px; color: #fff; }
+  @media (min-width: 640px) { .hero { padding: 26px 28px 40px; } .hero-title { font-size: 34px; } }
+
+  .view { animation: viewIn 320ms var(--ease); }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .content { padding: 22px 18px 8px; display: flex; flex-direction: column; gap: 26px; }
+  .section { display: flex; flex-direction: column; gap: 12px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+  .section-header h2 { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
+  .link-btn {
+    font-size: 13px; font-weight: 700; color: var(--primary-green);
+    padding: 6px 10px; border-radius: 100px; transition: background 0.18s ease;
+  }
+  .link-btn:hover { background: rgba(23, 97, 60, 0.07); }
+  .link-btn:active { background: rgba(23, 97, 60, 0.12); }
+
+  /* STATUS CARD */
+  .status-card {
+    background: var(--white); border-radius: var(--radius-lg); padding: 22px;
+    box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 16px;
+  }
+  .status-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .status-icon {
+    width: 48px; height: 48px; border-radius: 16px;
+    background: linear-gradient(145deg, #E7F4EC, #CFEADB);
+    display: grid; place-items: center; color: var(--primary-green); flex-shrink: 0;
+  }
+  .status-icon svg { width: 24px; height: 24px; }
+  .status-card-title { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; margin-bottom: 4px; }
+  .status-card-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; font-weight: 500; }
+
+  .progress-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .progress-bar { height: 10px; border-radius: 100px; background: #EAF0EA; overflow: hidden; }
+  .progress-fill {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, #2C9B63, #17613C);
+    transition: width 700ms var(--ease); width: 0%;
+  }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+
+  /* GRID */
+  .trees-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 640px) { .trees-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+  @media (min-width: 1000px) { .trees-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+
+  .tree-card {
+    background: var(--white); border-radius: var(--radius-md); overflow: hidden;
+    text-align: right; box-shadow: var(--shadow-sm);
+    transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
+    display: flex; flex-direction: column; cursor: pointer;
+    border: 1px solid rgba(16, 37, 27, 0.03);
+  }
+  .tree-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .tree-card:active { transform: scale(0.975); }
+
+  .tree-card-image {
+    position: relative; width: 100%; aspect-ratio: 1 / 1;
+    background: linear-gradient(145deg, #DCE8DE, #B7D0BE); overflow: hidden;
+  }
+  .tree-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+  .tree-card:hover .tree-card-image img { transform: scale(1.06); }
+
+  .tree-card-badge {
+    position: absolute; top: 10px; right: 10px; font-size: 10.5px; font-weight: 700;
+    padding: 5px 10px; border-radius: 100px; background: rgba(255,255,255,0.95);
+    color: var(--text); backdrop-filter: blur(6px);
+    display: flex; align-items: center; gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    letter-spacing: -0.1px; white-space: nowrap;
+  }
+  .tree-card-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge-green { color: var(--secondary-green); }
+  .badge-yellow { color: var(--yellow); }
+  .badge-red { color: var(--red); }
+  .badge-dark { color: var(--black); }
+
+  .tree-card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .tree-card-name { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
+  .tree-card-interval { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
+
+  /* CTA */
+  .cta-card {
+    background: linear-gradient(135deg, #17613C 0%, #10251B 100%);
+    border-radius: var(--radius-lg); padding: 20px; color: #fff;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    box-shadow: 0 10px 26px rgba(16, 37, 27, 0.18); overflow: hidden; position: relative;
+  }
+  .cta-text { position: relative; }
+  .cta-title { font-size: 16px; font-weight: 800; letter-spacing: -0.2px; margin-bottom: 3px; }
+  .cta-desc { font-size: 12.5px; color: rgba(255,255,255,0.7); font-weight: 500; }
+  .btn-primary {
+    background: #fff; color: var(--primary-green); font-weight: 800; font-size: 13.5px;
+    padding: 12px 18px; border-radius: 100px; display: inline-flex; align-items: center; gap: 7px;
+    transition: transform 0.16s var(--ease); flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .btn-primary svg { width: 16px; height: 16px; }
+  .btn-primary:active { transform: scale(0.96); }
+
+  /* BACK BAR */
+  .back-bar { display: flex; align-items: center; gap: 10px; padding: 20px 18px 6px; }
+  .back-btn {
+    width: 42px; height: 42px; border-radius: 14px; background: var(--white);
+    display: grid; place-items: center; color: var(--text); box-shadow: var(--shadow-sm);
+    transition: transform 0.16s var(--ease); border: 1px solid rgba(16, 37, 27, 0.04);
+  }
+  .back-btn svg { width: 20px; height: 20px; }
+  .back-btn:active { transform: scale(0.94); background: #f2f5f1; }
+  .page-title { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
+  .page-subtitle { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; }
+
+  /* DETAIL */
+  .detail-hero {
+    margin: 0 18px; border-radius: var(--radius-lg); overflow: hidden; position: relative;
+    aspect-ratio: 4 / 3; background: linear-gradient(145deg, #DCE8DE, #A9C7B3);
+    box-shadow: var(--shadow-md);
+  }
+  .detail-hero img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(16,37,27,0) 45%, rgba(16,37,27,0.85) 100%);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; gap: 8px; color: #fff;
+  }
+  .detail-hero-title { font-size: 26px; font-weight: 800; letter-spacing: -0.4px; }
+  .detail-status-pill {
+    align-self: flex-start; font-size: 11.5px; font-weight: 700;
+    padding: 6px 12px; border-radius: 100px; background: rgba(255,255,255,0.95);
+    display: inline-flex; align-items: center; gap: 6px; color: var(--text);
+  }
+  .detail-status-pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .detail-body { padding: 20px 18px 8px; display: flex; flex-direction: column; gap: 16px; }
+  .detail-desc { font-size: 14px; line-height: 1.75; color: var(--text-secondary); font-weight: 500; padding: 0 4px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat {
+    background: var(--white); border-radius: var(--radius-sm); padding: 14px;
+    box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px;
+    border: 1px solid rgba(16, 37, 27, 0.03);
+  }
+  .stat.full { grid-column: 1 / -1; }
+  .stat-icon {
+    width: 34px; height: 34px; border-radius: 12px;
+    background: #EAF4EE; color: var(--primary-green);
+    display: grid; place-items: center;
+  }
+  .stat-icon svg { width: 18px; height: 18px; }
+  .stat-icon.amber { background: #FBF1DC; color: var(--amber); }
+  .stat-label { font-size: 11.5px; color: var(--text-secondary); font-weight: 600; }
+  .stat-value { font-size: 13.5px; color: var(--text); font-weight: 700; letter-spacing: -0.1px; line-height: 1.5; }
+
+  /* HARVEST CARD (لليمون بس) */
+  .harvest-card {
+    background: linear-gradient(150deg, #FBF6EA 0%, #F5E7C5 100%);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    border: 1px solid rgba(201, 138, 43, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 18px rgba(201, 138, 43, 0.08);
+  }
+  .harvest-card-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .harvest-card-icon {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: linear-gradient(145deg, #F7E7C6, #EFD398);
+    color: var(--amber); display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .harvest-card-icon svg { width: 22px; height: 22px; }
+  .harvest-card-title { font-size: 15.5px; font-weight: 800; color: #6E4A14; letter-spacing: -0.2px; }
+  .harvest-card-sub { font-size: 12.5px; color: #8A6420; font-weight: 600; margin-top: 3px; }
+
+  .harvest-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  }
+  .harvest-stat {
+    background: rgba(255,255,255,0.7);
+    border-radius: 14px; padding: 12px;
+    display: flex; flex-direction: column; gap: 3px;
+    border: 1px solid rgba(201, 138, 43, 0.10);
+  }
+  .harvest-stat-label { font-size: 11px; color: #8A6420; font-weight: 600; }
+  .harvest-stat-value { font-size: 15px; color: #6E4A14; font-weight: 800; letter-spacing: -0.2px; }
+
+  .harvest-badge-due {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; font-weight: 700;
+    padding: 6px 12px; border-radius: 100px;
+    background: #6E4A14; color: #fff;
+  }
+  .harvest-badge-due::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #F7E7C6;
+  }
+
+  /* ACTIONS */
+  .actions-row { display: flex; gap: 10px; margin-top: 2px; }
+  .btn-water {
+    flex: 1;
+    background: linear-gradient(135deg, #2C9B63 0%, #17613C 100%);
+    color: #fff; font-weight: 800; font-size: 14.5px;
+    padding: 17px 18px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    box-shadow: 0 10px 24px rgba(23, 97, 60, 0.28);
+    transition: transform 0.16s var(--ease), box-shadow 0.16s ease;
+  }
+  .btn-water svg { width: 19px; height: 19px; }
+  .btn-water:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23, 97, 60, 0.34); }
+  .btn-water:active { transform: scale(0.98); }
+
+  .btn-harvest {
+    flex: 1;
+    background: linear-gradient(135deg, #C98A2B 0%, #8A5A14 100%);
+    color: #fff;
+    font-weight: 800; font-size: 14.5px;
+    padding: 17px 18px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    box-shadow: 0 10px 24px rgba(201, 138, 43, 0.28);
+    transition: transform 0.16s var(--ease), box-shadow 0.16s ease;
+  }
+  .btn-harvest svg { width: 19px; height: 19px; }
+  .btn-harvest:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(201, 138, 43, 0.34); }
+  .btn-harvest:active { transform: scale(0.98); }
+
+  /* HISTORY */
+  .history-section { margin-top: 12px; padding: 0 4px; }
+  .history-title {
+    font-size: 17px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.2px; margin-bottom: 12px; padding: 0 4px;
+  }
+  .history-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .history-item {
+    background: var(--white); border-radius: var(--radius-sm); padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: var(--shadow-sm); border: 1px solid rgba(16, 37, 27, 0.03);
+  }
+  .history-icon {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: linear-gradient(145deg, #E7F4EC, #CFEADB);
+    color: var(--primary-green); display: grid; place-items: center; flex-shrink: 0;
+  }
+  .history-icon.amber { background: linear-gradient(145deg, #FBF1DC, #F5E0B3); color: var(--amber); }
+  .history-icon svg { width: 17px; height: 17px; }
+  .history-text { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .history-main { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .history-time { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .history-weight {
+    font-size: 12.5px; font-weight: 800; color: var(--amber);
+    background: #FBF1DC; padding: 4px 10px; border-radius: 100px;
+    flex-shrink: 0;
+  }
+
+  .empty-state {
+    background: var(--white); border-radius: var(--radius-sm); padding: 28px 18px;
+    text-align: center; color: var(--text-secondary); font-size: 13.5px; font-weight: 500;
+    box-shadow: var(--shadow-sm); border: 1px dashed rgba(16, 37, 27, 0.08);
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: var(--app-max);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    display: flex; justify-content: space-around; gap: 6px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: saturate(180%) blur(22px);
+    -webkit-backdrop-filter: saturate(180%) blur(22px);
+    border-top: 1px solid var(--line); z-index: 100;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 9px 8px; border-radius: 16px; color: var(--text-secondary);
+    font-size: 11px; font-weight: 700;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.18s var(--ease);
+    letter-spacing: 0.2px;
+  }
+  .nav-item svg { width: 22px; height: 22px; transition: transform 0.2s var(--ease); }
+  .nav-item:active { transform: scale(0.96); }
+  .nav-item.active { color: var(--primary-green); background: rgba(23, 97, 60, 0.08); }
+  .nav-item.active svg { transform: translateY(-1px); }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom));
+    transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px;
+    z-index: 500; pointer-events: none; width: calc(100% - 40px); max-width: 360px; align-items: center;
+  }
+  .toast {
+    background: var(--dark-green); color: #fff; padding: 13px 20px; border-radius: 100px;
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13.5px; font-weight: 700;
+    box-shadow: 0 14px 36px rgba(16, 37, 27, 0.32);
+    opacity: 0; transform: translateY(16px) scale(0.96);
+    transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
+    letter-spacing: -0.1px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0) scale(1); }
+  .toast.amber { background: #6E4A14; }
+  .toast-icon {
+    width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.14);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .toast-icon svg { width: 12px; height: 12px; }
+
+  /* HARVEST SHEET (Modal لاختيار كمية الحصاد) */
+  .sheet-overlay {
+    position: fixed; inset: 0; background: rgba(16, 37, 27, 0.45);
+    z-index: 1000; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s var(--ease);
+    backdrop-filter: blur(4px);
+  }
+  .sheet-overlay.show { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%; max-width: var(--app-max);
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    padding: 14px 20px calc(24px + env(safe-area-inset-bottom));
+    z-index: 1001;
+    transition: transform 0.32s var(--ease);
+    box-shadow: 0 -12px 40px rgba(16, 37, 27, 0.18);
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .sheet.show { transform: translateX(-50%) translateY(0); }
+
+  .sheet-handle {
+    width: 42px; height: 4px; border-radius: 100px;
+    background: #E0E6E1; margin: 0 auto 18px;
+  }
+
+  .sheet-title {
+    font-size: 19px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.3px; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sheet-title-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(145deg, #F7E7C6, #EFD398);
+    color: var(--amber); display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .sheet-title-icon svg { width: 20px; height: 20px; }
+  .sheet-sub {
+    font-size: 13px; color: var(--text-secondary); font-weight: 500;
+    margin-bottom: 18px; padding-right: 48px;
+  }
+
+  .weight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  @media (min-width: 420px) { .weight-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .weight-btn {
+    background: #F4F6F1;
+    border: 1.5px solid transparent;
+    border-radius: 16px;
+    padding: 14px 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    transition: all 0.18s var(--ease);
+    min-height: 68px;
+  }
+  .weight-btn:hover { background: #EAF4EE; border-color: rgba(201, 138, 43, 0.25); }
+  .weight-btn:active { transform: scale(0.96); }
+  .weight-btn-value {
+    font-size: 15px; font-weight: 800; color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .weight-btn-label {
+    font-size: 11px; color: var(--text-secondary); font-weight: 600;
+  }
+
+  .sheet-cancel {
+    width: 100%;
+    padding: 15px;
+    border-radius: 16px;
+    background: #F4F6F1;
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 14px;
+    transition: background 0.18s ease;
+  }
+  .sheet-cancel:hover { background: #EAF0EA; }
+  .sheet-cancel:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <main id="views" aria-live="polite"></main>
+</div>
+
+<nav class="bottom-nav" id="bottomNav" aria-label="التنقل الرئيسي"></nav>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="sheet-overlay" id="sheetOverlay"></div>
+<div class="sheet" id="harvestSheet" role="dialog" aria-modal="true"></div>
+
+<script>
+/* =========================================================
+   ICONS
+   ========================================================= */
+const ICONS = {
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.7V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.7"/></svg>`,
+  plant: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V13"/><path d="M12 13c0-4 3-7 7-7 0 4-3 7-7 7z"/><path d="M12 13c0-4-3-7-7-7 0 4 3 7 7 7z"/></svg>`,
+  leaf: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c0 9-5 14-14 14a5 5 0 0 1-2-9c2-4 6-5 16-5z"/><path d="M4 20c4-4 8-8 16-16"/></svg>`,
+  droplet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11a6 6 0 1 1-12 0c0-4 6-11 6-11z"/></svg>`,
+  back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
+  clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>`,
+  basket: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18l-1.5 10a2 2 0 0 1-2 1.7H6.5a2 2 0 0 1-2-1.7L3 9z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/><path d="M8.5 13v3M15.5 13v3"/></svg>`,
+  scale: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M4 21h16"/><path d="M6 9h12l-2 9a2 2 0 0 1-2 1.6h-4A2 2 0 0 1 8 18z"/><circle cx="12" cy="6" r="2"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>`
+};
+
+/* =========================================================
+   DATA — الشجر بأسماء واضحة ووصف مفصّل
+   ========================================================= */
+const STORAGE_KEY = 'hadiqati.v5';
+const DAY_MS = 24 * 60 * 60 * 1000;
+const LEMON_HARVEST_INTERVAL = 8; // كل ٨ أيام يذكّرك تحصد الليمون
+
+const TREES_SEED = [
+  {
+    id: 'orange',
+    name: 'البرتقان',
+    interval: 4,
+    description: 'شجرة برتقان كبيرة بأوراق خضرا لامعة، وثمار برتقان مستديرة. عايزة سقاية منتظمة كل ٤ أيام، وبلاش تغرق التراب عشان الجذور ما تتخنقش.',
+    image: 'https://images.unsplash.com/photo-1547514701-42782101795e?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 5
+  },
+  {
+    id: 'lemon',
+    name: 'الليمون',
+    interval: 4,
+    description: 'شجرة ليمون متوسطة الحجم، أوراقها فيها رایحة ليمون مميزة، وثمارها صفرا بلمعة. محتاجة سقاية منتظمة كل ٤ أيام، ولها موسم حصاد كل ٨ أيام.',
+    image: 'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=900&q=80',
+    harvestInterval: LEMON_HARVEST_INTERVAL,
+    harvestSeason: 'من نوفمبر لـ فبراير',
+    daysAgo: 3
+  },
+  {
+    id: 'mango',
+    name: 'المانجا',
+    interval: 6,
+    description: 'شجرة مانجا كبيرة بأوراق طويلة عريضة، وثمارها بتبقى خضرا بتتحول للأصفر. بتحتاج سقاية غزيرة كل ٦ أيام، واسقيها لما الطبقة العليا من التراب تنشف.',
+    image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 4
+  },
+  {
+    id: 'pear',
+    name: 'الكمترى',
+    interval: 5,
+    description: 'شجرة كمترى متوسطة، أوراقها خضرا مدببة، وثمارها بتبقى خضرا بتبقى صفرا لما تنضج. بتتحمل العطش شوية، فسقاية كل ٥ أيام مناسبة ليها.',
+    image: 'https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 4
+  },
+  {
+    id: 'succulent',
+    name: 'النبات العصاري (الصبار)',
+    interval: 14,
+    description: 'نبات صغير في أصيص، ورقاته سميكة وطرية ومخزّنة الميّة جواها، وسيقانه قايمة. لونه أخضر فاتح وأحيانًا فيه خطوط حمرا على الحواف. اسقيه كل أسبوعين بس، وبلاش تزوّد عشان ما يعفنش.',
+    image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 10
+  },
+  {
+    id: 'hedge',
+    name: 'شجيرة السياج',
+    interval: 3,
+    description: 'شجيرة كثيفة بأوراق خضرا صغيرة متراصة، بتتشكّل على شكل سياج أو حيطة خضرا، بتستخدَم لتحديد الحديقة أو تخبّي المكان. محتاجة سقاية كل ٣ أيام وتشذيب كل فترة عشان تفضل كثيفة.',
+    image: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 4
+  },
+  {
+    id: 'climber',
+    name: 'النبات المتسلق',
+    interval: 5,
+    description: 'نبات بيتسلّق الجدار أو السلك، أوراقه صغيرة خضرا متشابكة وبيكبر بسرعة. ساعات أوراقه بتصفر لما الشمس تكون قوية، فخد بالك من السقاية كل ٥ أيام.',
+    image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80',
+    daysAgo: 7
+  }
+];
+
+/* أوزان الحصاد المتاحة */
+const WEIGHT_OPTIONS = [
+  { value: 0.25, label: 'ربع كيلو', shortLabel: 'ربع' },
+  { value: 0.5,  label: 'نص كيلو',  shortLabel: 'نص' },
+  { value: 0.75, label: 'تلات أرباع', shortLabel: '٣/٤' },
+  { value: 1,    label: 'كيلو',      shortLabel: '1' },
+  { value: 1.5,  label: 'كيلو ونص',  shortLabel: '1.5' },
+  { value: 2,    label: 'اتنين كيلو', shortLabel: '2' },
+  { value: 3,    label: 'تلاتة كيلو', shortLabel: '3' },
+  { value: 4,    label: 'أربعة كيلو', shortLabel: '4' },
+  { value: 5,    label: 'خمسة كيلو',  shortLabel: '5' }
+];
+
+const state = {
+  view: 'home',
+  treeId: null,
+  trees: [],
+  nav: [{ view: 'home', treeId: null }]
+};
+
+/* =========================================================
+   PERSISTENCE
+   ========================================================= */
+function seedTrees() {
+  return TREES_SEED.map(t => {
+    const history = [];
+    for (let i = 0; i < 3; i++) {
+      const ts = new Date(Date.now() - (t.daysAgo + i * t.interval) * DAY_MS).toISOString();
+      history.push({ timestamp: ts });
+    }
+    return {
+      id: t.id,
+      name: t.name,
+      interval: t.interval,
+      description: t.description,
+      image: t.image,
+      harvestInterval: t.harvestInterval || null,
+      harvestSeason: t.harvestSeason || null,
+      lastWatering: history[0].timestamp,
+      history,
+      lastHarvest: null,
+      harvestHistory: []
+    };
+  });
+}
+
+function loadTrees() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.trees) && parsed.trees.length) {
+        return parsed.trees.map(t => ({
+          ...t,
+          harvestHistory: Array.isArray(t.harvestHistory) ? t.harvestHistory : [],
+          lastHarvest: t.lastHarvest || null
+        }));
+      }
+    }
+  } catch (e) { /* ignore */ }
+  const seeded = seedTrees();
+  persist(seeded);
+  return seeded;
+}
+
+function persist(trees) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ trees: trees || state.trees }));
+  } catch (e) { /* ignore */ }
+}
+
+/* =========================================================
+   STATUS LOGIC
+   ========================================================= */
+function getStatus(tree) {
+  if (!tree.lastWatering) return { key: 'dark', label: 'متأخرة أوي', severity: 3 };
+  const days = (Date.now() - new Date(tree.lastWatering).getTime()) / DAY_MS;
+  const interval = tree.interval;
+  if (days < interval - 0.5) return { key: 'green', label: 'لسه مسقيّها', severity: 0 };
+  if (days < interval + 0.5) return { key: 'yellow', label: 'وقت السقاية جه', severity: 1 };
+  if (days < interval + 1.5) return { key: 'red', label: 'محتاجة سقاية', severity: 2 };
+  return { key: 'dark', label: 'متأخرة أوي', severity: 3 };
+}
+
+function getHarvestStatus(tree) {
+  if (!tree.harvestInterval) return null;
+  if (!tree.lastHarvest) {
+    return { key: 'green', label: 'لسه ما حصدتش', severity: 0, daysToNext: 0 };
+  }
+  const days = (Date.now() - new Date(tree.lastHarvest).getTime()) / DAY_MS;
+  const interval = tree.harvestInterval;
+  const remaining = Math.max(0, Math.ceil(interval - days));
+  if (days < interval - 1) return { key: 'green', label: 'لسه بدري على الحصاد', severity: 0, daysToNext: remaining };
+  if (days < interval + 1) return { key: 'yellow', label: 'وقت حصاد الليمون', severity: 1, daysToNext: 0 };
+  if (days < interval + 3) return { key: 'red', label: 'لازم تحصد حالًا', severity: 2, daysToNext: 0 };
+  return { key: 'dark', label: 'فات وقت الحصاد', severity: 3, daysToNext: 0 };
+}
+
+function getHealth(tree) {
+  const s = getStatus(tree).severity;
+  return [1, 0.7, 0.4, 0.1][s];
+}
+
+function getNeedsAttentionCount(trees) {
+  return trees.filter(t => getStatus(t).severity >= 1).length;
+}
+
+function pluralTrees(n) {
+  if (n === 0) return 'كله تمام، مفيش حاجة محتاجة سقاية';
+  if (n === 1) return 'شجرة واحدة محتاجة متابعة';
+  if (n === 2) return 'شجرتين محتاجين متابعة';
+  if (n <= 10) return `${n} شجرات محتاجين متابعة`;
+  return `${n} شجرة محتاجة متابعة`;
+}
+
+function getMostNeeding(trees) {
+  if (!trees.length) return null;
+  return trees.reduce((worst, t) => {
+    if (!worst) return t;
+    const a = getStatus(t).severity;
+    const b = getStatus(worst).severity;
+    if (a > b) return t;
+    if (a === b) {
+      const ta = new Date(t.lastWatering || 0).getTime();
+      const tb = new Date(worst.lastWatering || 0).getTime();
+      return ta < tb ? t : worst;
+    }
+    return worst;
+  }, null);
+}
+
+function getTotalHarvested(tree) {
+  if (!tree.harvestHistory || !tree.harvestHistory.length) return 0;
+  return tree.harvestHistory.reduce((sum, h) => sum + (h.weight || 0), 0);
+}
+
+function formatWeight(kg) {
+  if (kg === 0.25) return 'ربع كيلو';
+  if (kg === 0.5)  return 'نص كيلو';
+  if (kg === 0.75) return 'تلات أرباع';
+  if (kg === 1)    return 'كيلو';
+  if (kg === 1.5)  return 'كيلو ونص';
+  if (kg === 2)    return 'اتنين كيلو';
+  if (kg === 3)    return 'تلاتة كيلو';
+  if (kg === 4)    return 'أربعة كيلو';
+  if (kg === 5)    return 'خمسة كيلو';
+  return `${kg} كيلو`;
+}
+
+function formatTotalWeight(kg) {
+  if (kg === 0) return '0 كيلو';
+  if (Number.isInteger(kg)) return `${kg} كيلو`;
+  return `${kg.toFixed(2).replace(/\.?0+$/, '')} كيلو`;
+}
+
+/* =========================================================
+   FORMATTERS
+   ========================================================= */
+const AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const day = d.getDate();
+  const month = AR_MONTHS[d.getMonth()];
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const period = h >= 12 ? 'بالليل' : 'بالصبح';
+  h = h % 12 || 12;
+  return `${day} ${month} — ${String(h).padStart(2,'0')}:${m} ${period}`;
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'صباح الخير';
+  return 'مساء الخير';
+}
+
+/* =========================================================
+   NAV
+   ========================================================= */
+function navigateTab(view) {
+  if (view === state.view && state.view !== 'detail') return;
+  state.nav = [{ view, treeId: null }];
+  state.view = view;
+  state.treeId = null;
+  render();
+}
+
+function openTree(treeId) {
+  if (state.view === 'detail' && state.treeId === treeId) return;
+  state.nav.push({ view: 'detail', treeId });
+  state.view = 'detail';
+  state.treeId = treeId;
+  render();
+}
+
+function goBack() {
+  if (state.nav.length <= 1) { navigateTab('home'); return; }
+  state.nav.pop();
+  const prev = state.nav[state.nav.length - 1];
+  state.view = prev.view;
+  state.treeId = prev.treeId;
+  render();
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+function waterTree(treeId) {
+  const tree = state.trees.find(t => t.id === treeId);
+  if (!tree) return;
+  const now = new Date().toISOString();
+  tree.lastWatering = now;
+  tree.history = tree.history || [];
+  tree.history.unshift({ timestamp: now });
+  persist();
+  render();
+  showToast(`تمام، اتسجلت سقاية ${tree.name}`, 'default');
+}
+
+function openHarvestSheet(treeId) {
+  const tree = state.trees.find(t => t.id === treeId);
+  if (!tree) return;
+
+  const sheet = document.getElementById('harvestSheet');
+  const overlay = document.getElementById('sheetOverlay');
+
+  const weightButtons = WEIGHT_OPTIONS.map(w => `
+    <button class="weight-btn" data-action="confirm-harvest" data-tree-id="${tree.id}" data-weight="${w.value}">
+      <span class="weight-btn-value">${w.shortLabel}</span>
+      <span class="weight-btn-label">${w.label}</span>
+    </button>
+  `).join('');
+
+  sheet.innerHTML = `
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">
+      <span class="sheet-title-icon">${ICONS.basket}</span>
+      <span>حصاد الليمون</span>
+    </div>
+    <p class="sheet-sub">اختار كمية الليمون اللي حصدتها</p>
+    <div class="weight-grid">${weightButtons}</div>
+    <button class="sheet-cancel" data-action="close-sheet">إلغاء</button>
+  `;
+
+  overlay.classList.add('show');
+  sheet.classList.add('show');
+}
+
+function closeHarvestSheet() {
+  const sheet = document.getElementById('harvestSheet');
+  const overlay = document.getElementById('sheetOverlay');
+  sheet.classList.remove('show');
+  overlay.classList.remove('show');
+}
+
+function confirmHarvest(treeId, weight) {
+  const tree = state.trees.find(t => t.id === treeId);
+  if (!tree) return;
+  const now = new Date().toISOString();
+  const weightNum = parseFloat(weight);
+  tree.lastHarvest = now;
+  tree.harvestHistory = tree.harvestHistory || [];
+  tree.harvestHistory.unshift({
+    timestamp: now,
+    weight: weightNum,
+    weightLabel: formatWeight(weightNum)
+  });
+  persist();
+  closeHarvestSheet();
+  render();
+  showToast(`مبارك! اتسجل حصاد ${formatWeight(weightNum)} من ${tree.name}`, 'amber');
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+function showToast(message, tone) {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast' + (tone === 'amber' ? ' amber' : '');
+  el.innerHTML = `<span class="toast-icon">${ICONS.check}</span><span>${message}</span>`;
+  container.appendChild(el);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add('show'));
+  });
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 320);
+  }, 2400);
+}
+
+/* =========================================================
+   RENDER: HOME
+   ========================================================= */
+function renderHome() {
+  const trees = state.trees;
+  const attention = getNeedsAttentionCount(trees);
+  const avgHealth = trees.reduce((sum, t) => sum + getHealth(t), 0) / (trees.length || 1);
+  const progressPct = Math.round(avgHealth * 100);
+  const statusTitle = pluralTrees(attention);
+  const statusDesc = attention === 0
+    ? 'كل الشجر مسقي في وقته، كمّل كده.'
+    : 'سجّل آخر مرة سقيت فيها كل شجرة عشان تعرف إنت متأخر ولا لأ.';
+
+  const treeCards = trees.map(t => {
+    const s = getStatus(t);
+    return `
+      <button class="tree-card" data-action="open-tree" data-tree-id="${t.id}">
+        <div class="tree-card-image">
+          <img src="${t.image}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+          <span class="tree-card-badge badge-${s.key}">${s.label}</span>
+        </div>
+        <div class="tree-card-body">
+          <span class="tree-card-name">${t.name}</span>
+          <span class="tree-card-interval">كل ${t.interval} أيام</span>
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  return `
+    <section class="view">
+      <header class="hero">
+        <div class="hero-top">
+          <div class="brand">
+            <div class="brand-icon">${ICONS.leaf}</div>
+            <div class="brand-text">
+              <span class="brand-name">حديقتي</span>
+              <span class="brand-tag">دلّع شجرك وخلي جنينتك تمام</span>
+            </div>
+          </div>
+          <div class="day-chip">
+            <span class="day-chip-label">اليوم</span>
+            <span class="day-chip-value">متابعة السقاية</span>
+          </div>
+        </div>
+        <div class="hero-content">
+          <p class="greeting">${getGreeting()}</p>
+          <h1 class="hero-title">خلي جنينتك<br>دايمًا خضرة.</h1>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section">
+          <div class="section-header">
+            <h2>حالة الجنينّة</h2>
+            <button class="link-btn" data-action="tab" data-view="trees">كل الشجر</button>
+          </div>
+
+          <div class="status-card">
+            <div class="status-card-top">
+              <div>
+                <h3 class="status-card-title">${statusTitle}</h3>
+                <p class="status-card-desc">${statusDesc}</p>
+              </div>
+              <div class="status-icon">${ICONS.droplet}</div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
+              <div class="progress-meta">
+                <span>صحة الجنينّة</span>
+                <span>${progressPct}%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>الشجر</h2>
+            <button class="link-btn" data-action="tab" data-view="trees">شوف الكل</button>
+          </div>
+          <div class="trees-grid">${treeCards}</div>
+        </section>
+
+        <section class="section">
+          <div class="cta-card">
+            <div class="cta-text">
+              <h3 class="cta-title">وقت السقاية قرّب؟</h3>
+              <p class="cta-desc">سجّل السقاية بضغطة واحدة.</p>
+            </div>
+            <button class="btn-primary" data-action="water-now">
+              ${ICONS.droplet}
+              <span>اسقي حالًا</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+  `;
+}
+
+/* =========================================================
+   RENDER: ALL TREES
+   ========================================================= */
+function renderTrees() {
+  const cards = state.trees.map(t => {
+    const s = getStatus(t);
+    return `
+      <button class="tree-card" data-action="open-tree" data-tree-id="${t.id}">
+        <div class="tree-card-image">
+          <img src="${t.image}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+          <span class="tree-card-badge badge-${s.key}">${s.label}</span>
+        </div>
+        <div class="tree-card-body">
+          <span class="tree-card-name">${t.name}</span>
+          <span class="tree-card-interval">كل ${t.interval} أيام</span>
+        </div>
+      </button>
+    `;
+  }).join('');
+
+  return `
+    <section class="view">
+      <div class="back-bar">
+        <button class="back-btn" data-action="back" aria-label="رجوع">${ICONS.back}</button>
+        <div>
+          <h1 class="page-title">كل الشجر</h1>
+          <p class="page-subtitle">${state.trees.length} نباتات في جنينتك</p>
+        </div>
+      </div>
+      <div class="content">
+        <div class="trees-grid">${cards}</div>
+      </div>
+    </section>
+  `;
+}
+
+/* =========================================================
+   RENDER: DETAIL
+   الحصاد لليمون بس — فيه تذكير كل ٨ أيام
+   ========================================================= */
+function renderDetail() {
+  const tree = state.trees.find(t => t.id === state.treeId);
+  if (!tree) {
+    return `
+      <section class="view">
+        <div class="back-bar">
+          <button class="back-btn" data-action="back" aria-label="رجوع">${ICONS.back}</button>
+          <h1 class="page-title">مش موجود</h1>
+        </div>
+        <div class="content">
+          <div class="empty-state">مش لاقيين النبات ده في جنينتك.</div>
+        </div>
+      </section>
+    `;
+  }
+
+  const s = getStatus(tree);
+  const hasHarvest = !!tree.harvestInterval; // لليمون بس
+  const harvestStatus = getHarvestStatus(tree);
+
+  const waterHistory = (tree.history || []).slice();
+  const harvestHistory = (tree.harvestHistory || []).slice();
+
+  const waterHistoryHtml = waterHistory.length
+    ? waterHistory.map(h => `
+        <div class="history-item">
+          <div class="history-icon">${ICONS.check}</div>
+          <div class="history-text">
+            <span class="history-main">اتسجلت السقاية</span>
+            <span class="history-time">${formatDate(h.timestamp)}</span>
+          </div>
+        </div>
+      `).join('')
+    : `<div class="empty-state">مفيش سجل للسقاية لسه</div>`;
+
+  const harvestHistoryHtml = harvestHistory.length
+    ? harvestHistory.map(h => `
+        <div class="history-item">
+          <div class="history-icon amber">${ICONS.basket}</div>
+          <div class="history-text">
+            <span class="history-main">اتسجل الحصاد</span>
+            <span class="history-time">${formatDate(h.timestamp)}</span>
+          </div>
+          <span class="history-weight">${h.weightLabel || formatWeight(h.weight || 0)}</span>
+        </div>
+      `).join('')
+    : `<div class="empty-state">مفيش سجل للحصاد لسه</div>`;
+
+  /* كارت الحصاد — لليمون بس */
+  const totalKg = getTotalHarvested(tree);
+  const harvestCount = (tree.harvestHistory || []).length;
+  const nextDueHtml = (() => {
+    if (!harvestStatus) return '';
+    if (!tree.lastHarvest) {
+      return `<span class="harvest-badge-due">ابدأ الحصاد وسجّله</span>`;
+    }
+    if (harvestStatus.severity >= 1) {
+      return `<span class="harvest-badge-due">${harvestStatus.label}</span>`;
+    }
+    return `<span class="harvest-badge-due" style="background:#17613C">باقي ${harvestStatus.daysToNext} أيام على الحصاد</span>`;
+  })();
+
+  const harvestCard = hasHarvest ? `
+    <div class="harvest-card">
+      <div class="harvest-card-head">
+        <div>
+          <div class="harvest-card-title">حصاد الليمون</div>
+          <div class="harvest-card-sub">التذكير كل ${tree.harvestInterval} أيام</div>
+        </div>
+        <div class="harvest-card-icon">${ICONS.basket}</div>
+      </div>
+      <div class="harvest-stats">
+        <div class="harvest-stat">
+          <span class="harvest-stat-label">إجمالي الحصاد</span>
+          <span class="harvest-stat-value">${formatTotalWeight(totalKg)}</span>
+        </div>
+        <div class="harvest-stat">
+          <span class="harvest-stat-label">عدد مرات الحصاد</span>
+          <span class="harvest-stat-value">${harvestCount} مرة</span>
+        </div>
+        <div class="harvest-stat">
+          <span class="harvest-stat-label">آخر حصاد</span>
+          <span class="harvest-stat-value" style="font-size:12.5px">${tree.lastHarvest ? formatDate(tree.lastHarvest) : 'لسه'}</span>
+        </div>
+        <div class="harvest-stat">
+          <span class="harvest-stat-label">الموسم</span>
+          <span class="harvest-stat-value" style="font-size:12.5px">${tree.harvestSeason || '—'}</span>
+        </div>
+      </div>
+      ${nextDueHtml}
+    </div>
+  ` : '';
+
+  const harvestButton = hasHarvest ? `
+    <button class="btn-harvest" data-action="open-harvest-sheet" data-tree-id="${tree.id}">
+      ${ICONS.basket}
+      <span>حصدت الليمون</span>
+    </button>
+  ` : '';
+
+  const harvestSection = hasHarvest ? `
+    <section class="history-section">
+      <h3 class="history-title">سجل الحصاد</h3>
+      <div class="history-list">${harvestHistoryHtml}</div>
+    </section>
+  ` : '';
+
+  return `
+    <section class="view">
+      <div class="back-bar">
+        <button class="back-btn" data-action="back" aria-label="رجوع">${ICONS.back}</button>
+        <div>
+          <h1 class="page-title">${tree.name}</h1>
+          <p class="page-subtitle">تفاصيل النبات وسجل السقاية${hasHarvest ? ' والحصاد' : ''}</p>
+        </div>
+      </div>
+
+      <div class="detail-hero">
+        <img src="${tree.image}" alt="${tree.name}" onerror="this.style.display='none'">
+        <div class="detail-hero-overlay">
+          <span class="detail-status-pill badge-${s.key}">${s.label}</span>
+          <h2 class="detail-hero-title">${tree.name}</h2>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <p class="detail-desc">${tree.description}</p>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-icon">${ICONS.clock}</div>
+            <div>
+              <div class="stat-label">آخر سقاية</div>
+              <div class="stat-value">${formatDate(tree.lastWatering)}</div>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon">${ICONS.calendar}</div>
+            <div>
+              <div class="stat-label">الفاصل المقترح للسقاية</div>
+              <div class="stat-value">كل ${tree.interval} أيام</div>
+            </div>
+          </div>
+        </div>
+
+        ${harvestCard}
+
+        <div class="actions-row">
+          <button class="btn-water" data-action="water-tree" data-tree-id="${tree.id}">
+            ${ICONS.droplet}
+            <span>سقيت حالًا</span>
+          </button>
+          ${harvestButton}
+        </div>
+
+        <section class="history-section">
+          <h3 class="history-title">سجل السقاية</h3>
+          <div class="history-list">${waterHistoryHtml}</div>
+        </section>
+
+        ${harvestSection}
+      </div>
+    </section>
+  `;
+}
+
+/* =========================================================
+   RENDER: NAV
+   ========================================================= */
+function renderNav() {
+  const nav = document.getElementById('bottomNav');
+  const items = [
+    { view: 'home', label: 'الرئيسية', icon: ICONS.home },
+    { view: 'trees', label: 'الشجر', icon: ICONS.plant }
+  ];
+  const activeView = state.view === 'detail' ? 'trees' : state.view;
+  nav.innerHTML = items.map(it => `
+    <button class="nav-item ${activeView === it.view ? 'active' : ''}" data-action="tab" data-view="${it.view}">
+      ${it.icon}
+      <span>${it.label}</span>
+    </button>
+  `).join('');
+}
+
+/* =========================================================
+   MAIN RENDER
+   ========================================================= */
+function render() {
+  const views = document.getElementById('views');
+  let html = '';
+  if (state.view === 'home') html = renderHome();
+  else if (state.view === 'trees') html = renderTrees();
+  else if (state.view === 'detail') html = renderDetail();
+  views.innerHTML = html;
+  renderNav();
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const action = el.dataset.action;
+
+  if (action === 'tab') navigateTab(el.dataset.view);
+  else if (action === 'open-tree') openTree(el.dataset.treeId);
+  else if (action === 'back') goBack();
+  else if (action === 'water-tree') waterTree(el.dataset.treeId);
+  else if (action === 'open-harvest-sheet') openHarvestSheet(el.dataset.treeId);
+  else if (action === 'confirm-harvest') confirmHarvest(el.dataset.treeId, el.dataset.weight);
+  else if (action === 'close-sheet') closeHarvestSheet();
+  else if (action === 'water-now') {
+    const target = getMostNeeding(state.trees);
+    if (target) {
+      openTree(target.id);
+      setTimeout(() => {
+        const btn = document.querySelector('.btn-water');
+        if (btn) btn.focus({ preventScroll: true });
+      }, 260);
+    }
+  }
+}, { passive: true });
+
+/* قفل الشيت لو دوست برة */
+document.getElementById('sheetOverlay').addEventListener('click', closeHarvestSheet);
+
+/* =========================================================
+   INIT
+   ========================================================= */
+function init() {
+  state.trees = loadTrees();
+  persist();
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
